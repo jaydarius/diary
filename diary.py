@@ -1,22 +1,21 @@
 from collections import OrderedDict
 import datetime
+import sys
 
 from peewee import *
 
 db = SqliteDatabase('diary.db')
 
 
-
 class Entry(Model):
     content = TextField()
     timestamp = DateTimeField(default=datetime.datetime.now)
-    # timestamp
 
     class Meta:
         database = db
 
 def initialize():
-    """Create the database and the tabke if they do not exist."""
+    """Create the database and the table if they do not exist."""
     db.connect()
     db.create_tables([Entry], safe=True)
 
@@ -36,6 +35,13 @@ def menu_loop():
 
 def add_entry():
     """Add an entry."""
+    print("Enter your entry. Press ctrl+d when finished.")
+    data = sys.stdin.read().strip()
+
+    if data:
+        if input('Save entry? [Yn] ').lower() != 'n':
+            Entry.create(content=data)
+            print("Saved Successfully!")
 
 def view_entries():
     """View previous entries"""
